@@ -76,26 +76,21 @@ private:
 
 //------------------------------------------------------------------------------
 // Cube geometry from catmark_cube.h
-static float g_verts[8][3] = {{ -0.5f, -0.5f,  0.5f },
+static float g_verts[4][3] = {{ -0.5f, -0.5f,  0.5f },
                               {  0.5f, -0.5f,  0.5f },
                               { -0.5f,  0.5f,  0.5f },
-                              {  0.5f,  0.5f,  0.5f },
-                              { -0.5f,  0.5f, -0.5f },
-                              {  0.5f,  0.5f, -0.5f },
-                              { -0.5f, -0.5f, -0.5f },
-                              {  0.5f, -0.5f, -0.5f }};
+                              {  0.5f,  0.5f,  0.5f }};
 
-static int g_nverts = 8,
-           g_nfaces = 6;
+static int g_nverts = 4,
+           g_nfaces = 1,
+           g_ncorners = 1;
 
-static int g_vertsperface[6] = { 4, 4, 4, 4, 4, 4 };
+static int g_vertsperface[1] = { 4 };
 
-static int g_vertIndices[24] = { 0, 1, 3, 2,
-                                 2, 3, 5, 4,
-                                 4, 5, 7, 6,
-                                 6, 7, 1, 0,
-                                 1, 7, 5, 3,
-                                 6, 0, 2, 4  };
+static int g_vertIndices[4] = { 0, 1, 3, 2  };
+
+static float g_corners[1] = { 1.0f };
+static int g_cornerIndices[1] = { 3 };
 
 using namespace OpenSubdiv;
 
@@ -110,12 +105,19 @@ int main(int, char **) {
 
     Sdc::Options options;
     options.SetVtxBoundaryInterpolation(Sdc::Options::VTX_BOUNDARY_EDGE_ONLY);
+    options.SetFVarLinearInterpolation(Sdc::Options::FVAR_LINEAR_ALL);
+    options.SetCreasingMethod(Sdc::Options::CREASE_CHAIKIN);
+    options.SetTriangleSubdivision(Sdc::Options::TRI_SUB_CATMARK);
 
     Descriptor desc;
     desc.numVertices  = g_nverts;
     desc.numFaces     = g_nfaces;
     desc.numVertsPerFace = g_vertsperface;
     desc.vertIndicesPerFace  = g_vertIndices;
+
+    desc.numCorners = g_ncorners;
+    desc.cornerWeights = g_corners;
+    desc.cornerVertexIndices = g_cornerIndices;
 
 
     // Instantiate a FarTopologyRefiner from the descriptor
