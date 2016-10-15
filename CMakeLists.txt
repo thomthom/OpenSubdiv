@@ -286,6 +286,27 @@ option(NO_GLTESTS "Disable GL tests")
 
 option(OPENSUBDIV_GREGORY_EVAL_TRUE_DERIVATIVES "Enable true derivative evaluation for Gregory basis patches" OFF)
 
+# <StaticCRT>
+option(MSVC_STATIC_CRT_RELEASE "Statically link MSVC CRT in Release" OFF)
+option(MSVC_STATIC_CRT_DEBUG "Statically link MSVC CRT in Debug" OFF)
+
+if(MSVC AND MSVC_STATIC_CRT_RELEASE)
+    message(STATUS "Using static MSVC CRT Release")
+    # http://stackoverflow.com/a/32128977/486990
+    add_compile_options(
+        "$<$<CONFIG:RelWithDebInfo>:/MT>"
+        "$<$<CONFIG:Release>:/MT>"
+        "$<$<CONFIG:MinSizeRel>:/MT>"
+    )
+endif()
+if(MSVC AND MSVC_STATIC_CRT_DEBUG)
+    message(STATUS "Using static MSVC CRT Debug")
+    add_compile_options(
+        "$<$<CONFIG:Debug>:/MTd>"
+    )
+endif()
+# </StaticCRT>
+
 set(OSD_GPU FALSE)
 
 # Check for dependencies
